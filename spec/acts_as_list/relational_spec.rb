@@ -1,16 +1,5 @@
 require 'spec_helper'
-
-class Category
-  include Mongoid::Document
-  has_many :items
-end
-
-class Item
-  include Mongoid::Document
-  include Mongoid::ActsAsList
-  belongs_to :category
-  acts_as_list :scope => :category
-end
+require 'fixtures/relational_models'
 
 describe ActsAsList::Relational do
   let(:category_1) { Category.create! }
@@ -18,9 +7,11 @@ describe ActsAsList::Relational do
   let(:category_3) { Category.create! }
 
   before do
-    3.times do |n|
-      category_1.items.create!
-      category_2.items.create!
+    [category_1, category_2].each do |cat|
+      3.times do |n|
+        cat.items.create! position: n
+      end
+      cat.should have(3).items
     end
   end
 
@@ -39,7 +30,13 @@ describe ActsAsList::Relational do
     end
   end
 
-  describe ".acts_as_list", focus: true do
+  describe ".acts_as_list" do
+    it "defines #position_column && .position_column" do
+      item = category_1.items.first
+      item.position_column.should == :position
+      Item.position_column.should == :position
+    end
+
     it "defines #scope_condition" do
       item = category_1.items.first
       item.scope_condition.should == {:category_id => item.category_id}
@@ -50,10 +47,20 @@ describe ActsAsList::Relational do
     it "works without conditions" do
       category_1.items.order_by_position.map(&:position).should == [0,1,2]
     end
+  end
 
-    it "retrieves last item when needed" do
-      last_item = category_1.items.order_by_position.last
-      (last_item[last_item.position_column] + 1).should == last_item.send(:next_available_position)
+  describe "#next_available_position" do
+    it "works" do
+      item = Item.order_by_position( {category_id: category_3.id} ).last
+      item.should be_nil
+
+      item = category_3.items.create!
+      item.position.should == 0
+      item.reload.send(:next_available_position).should == 1
+
+      item = category_3.items.create!
+      item.position.should == 1
+      item.send(:next_available_position).should == 2
     end
   end
 end

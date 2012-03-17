@@ -1,6 +1,6 @@
 $:.unshift File.expand_path(File.dirname(__FILE__))
 
-require_relative "mongoid/acts_as_list"
+require "mongoid/acts_as_list"
 require "acts_as_list/version"
 
 module ActsAsList

@@ -1,6 +1,7 @@
 $: << File.expand_path('../lib', __FILE__)
 require 'rspec'
 require 'rspec/autorun'
+# require 'factory_girl'
 require 'database_cleaner'
 require 'database_cleaner/mongoid/truncation'
 
@@ -12,6 +13,12 @@ Mongoid.configure do |config|
 end
 
 RSpec.configure do |config|
+  # config.include FactoryGirl::Syntax::Methods
+
+  # focus
+  config.filter_run focus: true
+  config.run_all_when_everything_filtered = true
+
   config.before(:suite) do
     DatabaseCleaner['mongoid'].strategy = :truncation
   end
