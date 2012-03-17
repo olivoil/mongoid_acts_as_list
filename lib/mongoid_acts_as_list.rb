@@ -1,7 +1,4 @@
-$:.unshift File.expand_path(File.dirname(__FILE__))
-
 require "mongoid/acts_as_list"
-require "acts_as_list/version"
 
 module ActsAsList
   extend ActiveSupport::Concern
@@ -14,6 +11,7 @@ module ActsAsList
     end
   end
 
-  autoload :Relational, 'acts_as_list/relational.rb'
-  autoload :Embedded, 'acts_as_list/embedded.rb'
+  autoload :Relational , 'acts_as_list/relational.rb'
+  autoload :Embedded   , 'acts_as_list/embedded.rb'
+  autoload :VERSION    , 'acts_as_list/version.rb'
 end
