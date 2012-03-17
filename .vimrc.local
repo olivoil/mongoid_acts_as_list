@@ -1,0 +1,1 @@
+map <Leader>r :w\|!clear && bundle exec rspec %<cr>
