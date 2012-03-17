@@ -39,7 +39,7 @@ describe ActsAsList::Relational do
 
     it "defines #scope_condition" do
       item = category_1.items.first
-      item.scope_condition.should == {:category_id => item.category_id}
+      item.scope_condition.should == {:category_id => category_1.id}
     end
   end
 
@@ -50,17 +50,17 @@ describe ActsAsList::Relational do
   end
 
   describe "#next_available_position" do
-    it "works" do
-      item = Item.order_by_position( {category_id: category_3.id} ).last
-      item.should be_nil
+    it "starts at 0 when there are no items in the list" do
+      item = category_3.items.build
+      item.next_available_position.should == 0
+    end
 
-      item = category_3.items.create!
-      item.position.should == 0
-      item.reload.send(:next_available_position).should == 1
-
-      item = category_3.items.create!
-      item.position.should == 1
-      item.send(:next_available_position).should == 2
+    it "increments each time an item is added to the list" do
+      5.times do |n|
+        item = category_3.items.create!
+        item.position.should == n
+        item.next_available_position.should == n+1
+      end
     end
   end
 end
