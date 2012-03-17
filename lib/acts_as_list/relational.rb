@@ -9,17 +9,18 @@ module ActsAsList
       def acts_as_list options = {}
         options.reverse_merge! :field => 'position'
 
-        define_field options.fetch(:field).to_sym
-        define_scope options.fetch(:scope).to_sym
+        define_position_field options.fetch(:field).to_sym
+        define_position_scope options.fetch(:scope).to_sym
       end
 
       def order_by_position(conditions = {}, order = :asc)
-        where( conditions ).order_by( [position_column, order] )
+        order, conditions = [conditions || :asc, {}] unless conditions.is_a? Hash
+        where( conditions ).order_by [[position_column, order], [:created_at, order]]
       end
 
     private
 
-      def define_field(field_name)
+      def define_position_field(field_name)
         field field_name, type: Integer #, default: -> { next_available_position }
 
         set_callback :save, :before do |doc|
@@ -31,7 +32,7 @@ module ActsAsList
         end
       end
 
-      def define_scope(scope_name)
+      def define_position_scope(scope_name)
         scope_name = "#{scope_name}_id".intern if scope_name.to_s !~ /_id$/
         define_method(:scope_condition) { {scope_name => self[scope_name]} }
       end

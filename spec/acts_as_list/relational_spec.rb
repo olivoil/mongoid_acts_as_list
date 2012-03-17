@@ -47,6 +47,24 @@ describe ActsAsList::Relational do
     it "works without conditions" do
       category_1.items.order_by_position.map(&:position).should == [0,1,2]
     end
+
+    it "words with a condition" do
+      Item.order_by_position(:category_id => category_2.id).map(&:position).should == [0,1,2]
+    end
+
+    it "sorts by created_at if positions are equal" do
+      deuce = category_1.items.create! position: 1
+      items = category_1.items.order_by_position
+      items.map(&:position).should == [0,1,1,2]
+      items[2].should == deuce
+    end
+
+    it "sorts descendenly if specified" do
+      deuce = category_1.items.create! position: 2, created_at: Date.yesterday
+      items = category_1.items.order_by_position(:desc)
+      items.map(&:position).should == [2,2,1,0]
+      items[1].should == deuce
+    end
   end
 
   describe "#next_available_position" do
