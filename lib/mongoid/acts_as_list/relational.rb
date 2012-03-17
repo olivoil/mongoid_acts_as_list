@@ -1,13 +1,10 @@
-module ActsAsList
+module Mongoid::ActsAsList
   module Relational
     extend ActiveSupport::Concern
 
-    included do
-    end
-
     module ClassMethods
       def acts_as_list options = {}
-        options.reverse_merge! :field => 'position'
+        options.reverse_merge! field: Mongoid::ActsAsList.configuration.default_position_field
 
         define_position_field options.fetch(:field).to_sym
         define_position_scope options.fetch(:scope).to_sym
@@ -15,20 +12,20 @@ module ActsAsList
 
       def order_by_position(conditions = {}, order = :asc)
         order, conditions = [conditions || :asc, {}] unless conditions.is_a? Hash
-        where( conditions ).order_by [[position_column, order], [:created_at, order]]
+        where( conditions ).order_by [[position_field, order], [:created_at, order]]
       end
 
     private
 
       def define_position_field(field_name)
-        field field_name, type: Integer #, default: -> { next_available_position }
+        field field_name, type: Integer
 
         set_callback :save, :before do |doc|
           doc[field_name] = doc.next_available_position unless doc[field_name]
         end
 
         [:define_method, :define_singleton_method].each do |define_method|
-          send(define_method, :position_column) { field_name }
+          send(define_method, :position_field) { field_name }
         end
       end
 
@@ -40,7 +37,7 @@ module ActsAsList
 
     def next_available_position
       if item = last_item_in_list
-        item[position_column] + 1
+        item[position_field] + 1
       else
         0
       end

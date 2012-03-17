@@ -1,10 +1,10 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "acts_as_list/version"
+require "mongoid/acts_as_list/version"
 
 Gem::Specification.new do |s|
   s.name        = "mongoid_acts_as_list"
-  s.version     = ActsAsList::VERSION
+  s.version     = Mongoid::ActsAsList::VERSION
   s.authors     = ["Olivier Melcher"]
   s.email       = ["olivier.melcher@gmail.com"]
   s.homepage    = ""
