@@ -1,3 +1,7 @@
+require_relative 'mongoid/acts_as_list/list'
+require_relative 'mongoid/acts_as_list/configuration'
+require_relative 'mongoid/acts_as_list/version'
+
 module Mongoid
   module ActsAsList
     class << self
@@ -11,17 +15,7 @@ module Mongoid
 
     def self.included base
       self.configure
-
-      if base.embedded?
-        base.send :include, Embedded
-      else
-        base.send :include, Relational
-      end
+      base.send :include, List
     end
-
-    autoload :Relational    , 'mongoid/acts_as_list/relational.rb'
-    autoload :Embedded      , 'mongoid/acts_as_list/embedded.rb'
-    autoload :Configuration , 'mongoid/acts_as_list/configuration.rb'
-    autoload :VERSION       , 'mongoid/acts_as_list/version.rb'
   end
 end

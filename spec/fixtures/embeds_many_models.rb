@@ -1,13 +1,15 @@
 class Category
   include Mongoid::Document
   include Mongoid::Timestamps
-  has_many :items, class_name: 'RootItem'
+
+  embeds_many :items, class_name: 'EmbeddedItem'
 end
 
-class RootItem
+class EmbeddedItem
   include Mongoid::Document
   include Mongoid::Timestamps
   include Mongoid::ActsAsList
-  belongs_to :category
-  acts_as_list :scope => :category
+
+  embedded_in :category
+  acts_as_list
 end

@@ -2,6 +2,11 @@ require 'rspec'
 require 'rspec/autorun'
 require 'database_cleaner'
 require 'database_cleaner/mongoid/truncation'
+require 'pry'
+
+Dir[File.join(File.dirname(__FILE__), 'support/**/*.rb')].each do |f|
+  require f
+end
 
 require 'mongoid'
 require_relative '../lib/mongoid_acts_as_list'
