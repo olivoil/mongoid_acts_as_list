@@ -87,7 +87,7 @@ module Mongoid::ActsAsList
     end
 
     def start_position_in_list
-      0
+      Mongoid::ActsAsList.configuration.start_list_at
     end
   end
 end
