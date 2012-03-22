@@ -27,7 +27,7 @@ shared_examples_for "a list" do
     end
   end
 
-  describe "#start_position_in_list", :focus do
+  describe "#start_position_in_list" do
     it "is configurable" do
       category_3.items.should be_empty
       start = 1

@@ -7,7 +7,7 @@ module Mongoid::ActsAsList
         private
 
         def define_position_scope(scope_name)
-          raise List::NoScopeError.new("#acts_as_list requires a scope option") if scope_name.blank?
+          raise List::NoScopeError, "#acts_as_list requires a scope option" if scope_name.blank?
 
           scope_name = "#{scope_name}_id".intern if scope_name.to_s !~ /_id$/
           define_method(:scope_condition) { {scope_name => self[scope_name]} }
