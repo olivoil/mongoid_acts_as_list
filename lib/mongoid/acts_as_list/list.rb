@@ -59,6 +59,14 @@ module Mongoid::ActsAsList
       !in_list?
     end
 
+    def first?
+      self[position_field] == start_position_in_list
+    end
+
+    def last?
+      self[position_field] == last_item_in_list[position_field]
+    end
+
   private
 
     def last_item_in_list

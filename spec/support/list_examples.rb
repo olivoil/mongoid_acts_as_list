@@ -80,6 +80,27 @@ shared_examples_for "a list" do
     end
   end
 
+  describe "#first?" do
+    it "returns true if item is the first of the list" do
+      category_1.items.order_by_position.first.should be_first
+    end
+
+    it "returns false if item is not the first of the list" do
+      all_but_first = category_1.items.order_by_position.to_a[1..-1]
+      all_but_first.map(&:first?).uniq.should == [false]
+    end
+  end
+
+  describe "#last?" do
+    it "returns true if item is the last of the list" do
+      category_1.items.order_by_position.last.should be_last
+    end
+
+    it "returns false if item is not the last of the list" do
+      all_but_last = category_1.items.order_by_position.to_a[0..-2]
+      all_but_last.map(&:last?).uniq.should == [false]
+    end
+  end
 
   describe "#start_position_in_list" do
     before do
