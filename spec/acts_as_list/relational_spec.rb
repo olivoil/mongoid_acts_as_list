@@ -34,6 +34,12 @@ describe Mongoid::ActsAsList::List do
           item = category_1.items.first
           item.scope_condition.should == {:category_id => category_1.id}
         end
+
+        it "raises a NoScope error if called without a scope option" do
+          lambda do
+            RootItem.acts_as_list(scope: nil)
+          end.should raise_exception Mongoid::ActsAsList::List::NoScopeError
+        end
       end
 
       describe ".order_by_position" do

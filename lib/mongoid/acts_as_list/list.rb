@@ -5,6 +5,8 @@ module Mongoid::ActsAsList
     autoload :Root     , 'mongoid/acts_as_list/list/root.rb'
     autoload :Embedded , 'mongoid/acts_as_list/list/embedded.rb'
 
+    class NoScopeError < RuntimeError; end
+
     module ClassMethods
       def acts_as_list options = {}
         field = options.fetch(:field, Mongoid::ActsAsList.configuration.default_position_field).try(:to_sym)
