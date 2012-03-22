@@ -78,19 +78,49 @@ module Mongoid::ActsAsList
       items_in_list.where(position_field => self[position_field]-1).first
     end
     alias_method :lower_item, :previous_item
+
+    def insert_at(new_position)
+      shuffle_positions to: new_position
+      update_attribute(position_field, new_position)
+    end
+
   private
+
+    def shuffle_positions(options = {})
+      from = options.fetch(:from, self[position_field])
+      to   = options.fetch(:to)
+
+      if from < to
+        shift_position for: items_between(from, to + 1), by: -1
+      else
+        shift_position for: items_between(to - 1, from), by: 1
+      end
+    end
+
+    def items_between(from, to, options = {})
+      strict = options.fetch(:strict, true)
+      if strict
+        items_in_list.where(position_field.gt => from, position_field.lt => to)
+      else
+        items_in_list.where(position_field.gte => from, position_field.lte => to)
+      end
+    end
 
     def last_item_in_list
       items_in_list.order_by_position.last
     end
 
-    def later_items_in_list
+    def previous_items_in_list
+      items_in_list.where(position_field.lt => self[position_field])
+    end
+
+    def next_items_in_list
       items_in_list.where(position_field.gt => self[position_field])
     end
 
     def shift_later_items_towards_start_of_list
       return unless in_list?
-      shift_position for: later_items_in_list, by: -1
+      shift_position for: next_items_in_list, by: -1
     end
 
     def next_available_position_in_list
