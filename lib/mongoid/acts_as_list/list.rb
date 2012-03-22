@@ -12,7 +12,7 @@ module Mongoid::ActsAsList
         field = options.fetch(:field, Mongoid::ActsAsList.configuration.default_position_field).try(:to_sym)
         scope = options.fetch(:scope, nil).try(:to_sym)
 
-        include_list_submodule
+        include list_submodule
         define_position_field field
         define_position_scope scope
       end
@@ -24,12 +24,8 @@ module Mongoid::ActsAsList
 
     private
 
-      def include_list_submodule
-        if embedded?
-          include Embedded
-        else
-          include Root
-        end
+      def list_submodule
+        embedded? ? Embedded : Root
       end
 
       def define_position_field(field_name)
