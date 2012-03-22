@@ -22,10 +22,6 @@ module Mongoid::ActsAsList
         where( conditions ).order_by [[position_field, order], [:created_at, order]]
       end
 
-      def shift_positions
-        raise NotImplementedError
-      end
-
     private
 
       def include_list_submodule
@@ -88,10 +84,6 @@ module Mongoid::ActsAsList
       else
         start_position_in_list
       end
-    end
-
-    def items_in_list
-      raise NotImplementedError
     end
 
     def start_position_in_list
