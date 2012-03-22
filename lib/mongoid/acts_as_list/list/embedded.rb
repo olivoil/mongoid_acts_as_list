@@ -20,7 +20,7 @@ module Mongoid::ActsAsList
       by_how_much = options.fetch(:by, 1)
 
       criteria.each do |doc|
-        doc.update_attributes(position_field => doc[position_field]+by_how_much)
+        doc.inc(position_field, by_how_much)
       end
     end
 

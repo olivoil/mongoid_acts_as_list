@@ -51,7 +51,6 @@ shared_examples_for "a list" do
         items.map(&position_field).should == [0,1,2,3,4]
       end
 
-      it "works on embedded items after reloading the collection"
 
       it "does not shift positions if the element was already removed from the list" do
         item = category_1.items.where(position_field => 2).first
