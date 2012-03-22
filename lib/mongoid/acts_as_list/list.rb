@@ -65,13 +65,13 @@ module Mongoid::ActsAsList
       items_in_list.order_by_position.last
     end
 
-    def later_items
+    def later_items_in_list
       items_in_list.where(position_field.gt => self[position_field])
     end
 
     def shift_later_items_towards_start_of_list
       return unless in_list?
-      shift_position for: later_items, by: -1
+      shift_position for: later_items_in_list, by: -1
     end
 
     def next_available_position_in_list
