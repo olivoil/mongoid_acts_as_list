@@ -102,6 +102,48 @@ shared_examples_for "a list" do
     end
   end
 
+  %w[higher_item next_item].each do |method_name|
+    describe "##{method_name}" do
+      it "returns the next item in the list if there is one" do
+        item      = category_1.items.where(position_field => 1).first
+        next_item = category_1.items.where(position_field => 2).first
+        item.send(method_name).should == next_item
+      end
+
+      it "returns nil if the item is already the last" do
+        item = category_1.items.order_by_position.last
+        item.send(method_name).should be_nil
+      end
+
+      it "returns nil if the item is not in the list" do
+        item = category_1.items.order_by_position.first
+        item.remove_from_list
+        item.send(method_name).should be_nil
+      end
+    end
+  end
+
+  %w[lower_item previous_item].each do |method_name|
+    describe "##{method_name}" do
+      it "returns the previous item in the list if there is one" do
+        item          = category_1.items.where(position_field => 1).first
+        previous_item = category_1.items.where(position_field => 0).first
+        item.send(method_name).should == previous_item
+      end
+
+      it "returns nil if the item is already the first" do
+        item = category_1.items.order_by_position.first
+        item.send(method_name).should be_nil
+      end
+
+      it "returns nil if the item is not in the list" do
+        item = category_1.items.order_by_position.last
+        item.remove_from_list
+        item.send(method_name).should be_nil
+      end
+    end
+  end
+
   describe "#start_position_in_list" do
     before do
       @original_start = Mongoid::ActsAsList.configuration.start_list_at

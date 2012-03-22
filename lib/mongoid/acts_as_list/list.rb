@@ -67,6 +67,17 @@ module Mongoid::ActsAsList
       self[position_field] == last_item_in_list[position_field]
     end
 
+    def next_item
+      return unless in_list?
+      items_in_list.where(position_field => self[position_field]+1).first
+    end
+    alias_method :higher_item, :next_item
+
+    def previous_item
+      return unless in_list?
+      items_in_list.where(position_field => self[position_field]-1).first
+    end
+    alias_method :lower_item, :previous_item
   private
 
     def last_item_in_list
