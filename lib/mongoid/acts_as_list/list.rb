@@ -5,7 +5,7 @@ module Mongoid::ActsAsList
     autoload :Root     , 'mongoid/acts_as_list/list/root.rb'
     autoload :Embedded , 'mongoid/acts_as_list/list/embedded.rb'
 
-    class NoScopeError < RuntimeError; end
+    class ScopeMissingError < RuntimeError; end
 
     module ClassMethods
       def acts_as_list options = {}

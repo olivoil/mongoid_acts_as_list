@@ -38,7 +38,7 @@ describe Mongoid::ActsAsList::List do
         it "raises a NoScope error if called without a scope option" do
           lambda do
             RootItem.acts_as_list(scope: nil)
-          end.should raise_exception Mongoid::ActsAsList::List::NoScopeError
+          end.should raise_exception Mongoid::ActsAsList::List::ScopeMissingError
         end
       end
 

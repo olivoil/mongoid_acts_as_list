@@ -3,7 +3,7 @@ module Mongoid::ActsAsList
     extend ActiveSupport::Concern
 
     included do
-      raise List::NoScopeError, "Mongoid::ActsAsList::Embedded can only be included in embedded documents" unless embedded?
+      raise List::ScopeMissingError, "Mongoid::ActsAsList::Embedded can only be included in embedded documents" unless embedded?
     end
 
     module ClassMethods
