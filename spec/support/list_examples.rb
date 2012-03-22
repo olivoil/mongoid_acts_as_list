@@ -27,18 +27,6 @@ shared_examples_for "a list" do
     end
   end
 
-  describe "#start_position_in_list" do
-    it "is configurable" do
-      category_3.items.should be_empty
-      start = 1
-      Mongoid::ActsAsList.configure {|c| c.start_list_at = start}
-      item = category_3.items.create!
-      item[position_field].should == start
-      item = category_3.items.create!
-      item[position_field].should == start+1
-    end
-  end
-
   describe "Insert a new item to the list" do
     it "inserts at the next available position for a given category" do
       item = category_1.items.create!
@@ -91,4 +79,25 @@ shared_examples_for "a list" do
       end
     end
   end
+
+
+  describe "#start_position_in_list" do
+    before do
+      @original_start = Mongoid::ActsAsList.configuration.start_list_at
+    end
+    after do
+      Mongoid::ActsAsList.configure {|c| c.start_list_at = @original_start}
+    end
+
+    it "is configurable" do
+      category_3.items.should be_empty
+      start = 1
+      Mongoid::ActsAsList.configure {|c| c.start_list_at = start}
+      item = category_3.items.create!
+      item[position_field].should == start
+      item = category_3.items.create!
+      item[position_field].should == start+1
+    end
+  end
+
 end
