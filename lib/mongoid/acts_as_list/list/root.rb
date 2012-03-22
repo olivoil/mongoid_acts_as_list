@@ -15,14 +15,14 @@ module Mongoid::ActsAsList
       end
 
       ## InstanceMethods
+      private
+
       def shift_position options = {}
         criteria    = options.fetch(:for, to_criteria)
         by_how_much = options.fetch(:by, 1)
 
         db.collection(collection.name).update(criteria.selector, {"$inc" => { position_field => by_how_much }}, {multi: true})
       end
-
-    private
 
       def to_criteria
         self.class.where(_id: _id)

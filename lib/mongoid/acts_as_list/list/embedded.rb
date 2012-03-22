@@ -15,6 +15,8 @@ module Mongoid::ActsAsList
     end
 
     ## InstanceMethods
+    private
+
     def shift_position options = {}
       criteria    = options.fetch(:for, to_criteria)
       by_how_much = options.fetch(:by, 1)
@@ -23,8 +25,6 @@ module Mongoid::ActsAsList
         doc.inc(position_field, by_how_much)
       end
     end
-
-  private
 
     def to_criteria
       embedded_collection.where(_id: _id)
