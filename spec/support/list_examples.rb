@@ -161,6 +161,7 @@ shared_examples_for "a list" do
         positions.should == [0,1,2]
       end
     end
+
     context "to a higher position" do
       let(:item) { category_1.items.order_by_position.first }
 
@@ -177,6 +178,7 @@ shared_examples_for "a list" do
         positions.should == [0,1,2]
       end
     end
+
     context "to the same position" do
       it "does nothing" do
         item = category_1.items.first
@@ -188,6 +190,34 @@ shared_examples_for "a list" do
           positions.should == [0,1,2]
         end.should_not change(item, position_field)
       end
+    end
+  end
+
+  describe "default_scope" do
+    xit "orders items by position by default"
+  end
+
+  describe "#move" do
+    xit "is next on my todo list"
+
+    context ":to" do
+    end
+    context ":by" do
+    end
+    context ":above, :before" do
+    end
+    context ":below, :after" do
+    end
+    context ":higher, :towards_start" do
+    end
+    context ":lower, :towards_end" do
+    end
+
+    describe "#move_to_top, #move_to_start" do
+    end
+    describe "#move_to_bottom, #move_to_end" do
+    end
+    describe "#move_higher, #move_lower" do
     end
   end
 
