@@ -80,15 +80,21 @@ module Mongoid::ActsAsList
     alias_method :lower_item, :previous_item
 
     def insert_at(new_position)
-      shuffle_positions to: new_position
+      insert_space_at(new_position)
       update_attribute(position_field, new_position)
     end
 
   private
 
-    def shuffle_positions(options = {})
-      from = options.fetch(:from, self[position_field])
-      to   = options.fetch(:to)
+    # Internal: Make space in the list at a given position number
+    #   used when moving a item to a new position in the list.
+    #
+    # position - an Integer representing the position number
+    #
+    # Returns nothing
+    def insert_space_at(position)
+      from = self[position_field] || next_available_position_in_list
+      to   = position
 
       if from < to
         shift_position for: items_between(from, to + 1), by: -1

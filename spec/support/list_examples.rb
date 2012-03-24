@@ -160,6 +160,12 @@ shared_examples_for "a list" do
         positions = category_1.items.order_by_position.map(&position_field)
         positions.should == [0,1,2]
       end
+
+      it "works for items that don't have a position yet" do
+        item.remove_from_list
+        item.insert_at 1
+        item[position_field].should == 1
+      end
     end
 
     context "to a higher position" do
@@ -176,6 +182,12 @@ shared_examples_for "a list" do
         item.insert_at 2
         positions = category_1.items.order_by_position.map(&position_field)
         positions.should == [0,1,2]
+      end
+
+      it "works for items that don't have a position yet" do
+        item.remove_from_list
+        item.insert_at 2
+        item[position_field].should == 2
       end
     end
 
