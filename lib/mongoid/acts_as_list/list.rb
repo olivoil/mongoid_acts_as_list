@@ -51,34 +51,59 @@ module Mongoid::ActsAsList
       update_attributes(position_field => nil)
     end
 
+    # Public: Indicates if an item is in the list
+    #
+    # Returns true if the item is in the list or false if not
     def in_list?
       self[position_field].present?
     end
 
+    # Public: Indicates if an item is not in the list
+    #
+    # Returns true if the item is not in the list or false if it is
     def not_in_list?
       !in_list?
     end
 
+    # Public: Indicates if an item is the first of the list
+    #
+    # Returns true if the item is the first in the list or false if not
     def first?
       self[position_field] == start_position_in_list
     end
 
+    # Public: Indicates if an item is the last of the list
+    #
+    # Returns true if the item is the last in the list or false if not
     def last?
       self[position_field] == last_item_in_list[position_field]
     end
 
+    # Public: Gets the following item in the list
+    #
+    # Returns the next item in the list
+    #   or nil if there isn't a next item
     def next_item
       return unless in_list?
       items_in_list.where(position_field => self[position_field]+1).first
     end
     alias_method :higher_item, :next_item
 
+    # Public: Gets the preceding item in the list
+    #
+    # Returns the previous item in the list
+    #   or nil if there isn't a previous item
     def previous_item
       return unless in_list?
       items_in_list.where(position_field => self[position_field]-1).first
     end
     alias_method :lower_item, :previous_item
 
+    # Public: Insert at a given position in the list
+    #
+    # new_position - an Integer indicating the position to insert the item at
+    #
+    # Returns nothing
     def insert_at(new_position)
       insert_space_at(new_position)
       update_attribute(position_field, new_position)
