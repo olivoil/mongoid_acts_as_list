@@ -203,33 +203,208 @@ shared_examples_for "a list" do
         end.should_not change(item, position_field)
       end
     end
+
+    context "to extreme positions" do
+      it "like 0" do
+        item = category_1.items.order_by_position.last
+
+        item.remove_from_list
+        item.insert_at 0
+
+        item[position_field].should == 0
+        category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+      end
+      it "like the last position" do
+        item = category_1.items.order_by_position.first
+
+        item.remove_from_list
+        item.insert_at 1
+
+        item[position_field].should == 1
+        category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+      end
+      it "like the next available position" do
+        item = category_1.items.order_by_position.first
+
+        item.remove_from_list
+        item.insert_at 2
+
+        item[position_field].should == 2
+        category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+      end
+    end
   end
 
-  describe "default_scope" do
-    xit "orders items by position by default"
+  describe " #move" do
+    context ":to =>" do
+      context "Integer" do
+        it "inserts at a given position" do
+          item = category_1.items.order_by_position.first
+          item.should_receive(:insert_at).with 2
+          item.move to: 2
+        end
+      end
+
+      context "Symbol" do
+        [:start, :top, :end, :bottom].each do |destination|
+          it "moves to #{destination}" do
+            item = category_1.items.first
+            item.should_receive("move_to_#{destination}")
+            item.move to: destination
+          end
+        end
+      end
+    end
+
+    [:before, :above, :after, :below].each do |sym|
+      context "#{sym} =>" do
+        it "delegates to the right method" do
+          item = category_1.items.first
+          other_item = category_1.items.last
+          item.should_receive("move_#{sym}").with(other_item)
+          item.move(sym => other_item)
+        end
+      end
+    end
   end
 
-  describe "#move" do
-    xit "is next on my todo list"
+  [:top, :start].each do |sym|
+    describe "#move_to_#{sym}" do
+      it "#{sym} moves an item in list to the start of list" do
+        item = category_1.items.order_by_position.last
+        item.move to: sym
+        item[position_field].should == 0
+        category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+      end
 
-    context ":to" do
+      it "#{sym} moves an item not in list to the start of list" do
+        item = category_1.items.order_by_position.last
+        item.remove_from_list
+        item.move to: sym
+        item[position_field].should == 0
+        category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+      end
     end
-    context ":by" do
-    end
-    context ":above, :before" do
-    end
-    context ":below, :after" do
-    end
-    context ":higher, :towards_start" do
-    end
-    context ":lower, :towards_end" do
-    end
+  end
 
-    describe "#move_to_top, #move_to_start" do
+  [:end, :bottom].each do |sym|
+    describe "#move_to_#{sym}" do
+      it "#{sym} moves an item in list to the end of list" do
+        item = category_1.items.order_by_position.first
+        item.move to: sym
+        item[position_field].should == 2
+        category_1.reload.items.order_by_position.map(&position_field).should == [0,1,2]
+      end
+
+      it "#{sym} moves an item not in list to the end of list" do
+        item = category_1.items.order_by_position.first
+        item.remove_from_list
+        item.move to: sym
+        item[position_field].should == 2
+        category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+      end
     end
-    describe "#move_to_bottom, #move_to_end" do
+  end
+
+  [:backwards, :higher].each do |sym|
+    describe " #move_#{sym}" do
+      xit "is next on my TODO"
+      context "for the last item of the list" do
+        it "does not change the item's position"
+        it "returns false"
+      end
+      context "for any other item" do
+        it "moves to the next position"
+        it "returns true"
+      end
     end
-    describe "#move_higher, #move_lower" do
+  end
+
+  [:forwards, :lower].each do |sym|
+    describe " #move_#{sym}" do
+      xit "is next on my TODO"
+      context "for the first item of the list" do
+        it "does not change the item's position"
+        it "returns false"
+      end
+      context "for any other item" do
+        it "moves to the previous position"
+        it "returns true"
+      end
+    end
+  end
+
+  [:before, :above].each do |sym|
+    describe " #move_#{sym}" do
+      before do
+        item.send("move_#{sym}", other_item)
+      end
+
+      context "towards the start" do
+        let(:other_item) { category_1.items.order_by_position.first }
+        let(:item)       { category_1.items.order_by_position.last  }
+
+        it "moves to the same position as other_item" do
+          item[position_field].should == 0
+        end
+
+        it "shifts other_item " do
+          other_item.reload[position_field].should == 1
+        end
+
+        it "shifts any item after that by 1" do
+          category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+        end
+      end
+      context "towards the end" do
+        let(:item)       { category_1.items.order_by_position.first }
+        let(:other_item) { category_1.items.order_by_position.last  }
+
+        it "moves to the same position as other_item" do
+          item[position_field].should == 1
+        end
+
+        it "shifts other_item " do
+          other_item[position_field].should == 2
+        end
+
+        it "shifts any item after that by 1" do
+          category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+        end
+      end
+    end
+  end
+
+  [:after, :below].each do |sym|
+    describe " #move_#{sym}" do
+      before do
+        item.send("move_#{sym}", other_item)
+      end
+
+      context "towards the start" do
+        let(:other_item) { category_1.items.order_by_position.first }
+        let(:item)       { category_1.items.order_by_position.last  }
+
+        it "moves to other_item's next position" do
+          item[position_field].should == 1
+        end
+
+        it "shifts any item before that by -1" do
+          category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+        end
+      end
+      context "towards the end" do
+        let(:item)       { category_1.items.order_by_position.first }
+        let(:other_item) { category_1.items.order_by_position.last  }
+
+        it "moves to the same position as other_item" do
+          item[position_field].should == 2
+        end
+
+        it "shifts any item before that by -1" do
+          category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+        end
+      end
     end
   end
 
@@ -251,5 +426,4 @@ shared_examples_for "a list" do
       item[position_field].should == start+1
     end
   end
-
 end

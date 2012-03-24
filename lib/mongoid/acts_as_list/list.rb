@@ -45,8 +45,98 @@ module Mongoid::ActsAsList
 
     ## InstanceMethods
 
+    # Public: Moves the item to new position in the list
+    #
+    # where - a Hash specifying where to move the item
+    #           to:             - an Integer representing a position number
+    #                             or a Symbol from the list :start, :top, :end, :bottom
+    #           before:, above: - another object in the list
+    #           after: , below: - another object in the list
+    #
+    # Examples
+    #
+    #   item.move to: 3
+    #   #=> moves item to the 3rd position
+    #
+    #   item.move to: :start
+    #   #=> moves item to the first position in the list
+    #
+    #   other_item.position #=> 3
+    #
+    #   item.move before: other_item
+    #   #=> moves item to position 3 and other_item to position 4
+    #
+    #   item.move after: other_item
+    #   #=> moves item to position 4
+    #
+    # Returns nothing
+    def move(where = {})
+      options = [:to, :before, :above, :after, :below]
+      prefix, destination = where.each.select { |k, _| options.include? k }.first
+
+      raise ArgumentError, "#move requires one of the following options: #{options.join(', ')}" unless prefix
+
+      send("move_#{prefix}", destination)
+    end
+
+    def move_to(destination)
+      if destination.is_a? Symbol
+        send("move_to_#{destination}")
+      else
+        insert_at destination
+      end
+    end
+
+    def move_to_end
+      new_position = in_list? ? last_position_in_list : next_available_position_in_list
+      insert_at new_position
+    end
+    alias_method :move_to_bottom, :move_to_end
+
+    def move_to_start
+      insert_at start_position_in_list
+    end
+    alias_method :move_to_top, :move_to_start
+
+    def move_forwards
+      # TODO
+    end
+    alias_method :move_lower, :move_forwards
+
+    def move_backwards
+      # TODO
+    end
+    alias_method :move_higher, :move_backwards
+
+    def move_before(other_item)
+      destination = other_item[position_field]
+      origin = self[position_field]
+
+      if origin > destination
+        insert_at destination
+      else
+        insert_at destination - 1
+      end
+    end
+    alias_method :move_above, :move_before
+
+    def move_after(other_item)
+      destination = other_item[position_field]
+      origin = self[position_field]
+
+      if origin > destination
+        insert_at destination + 1
+      else
+        insert_at destination
+      end
+    end
+    alias_method :move_below, :move_after
+
+    # Public: Removes the item from the list
+    #
+    # Returns true if the item was removed, false if not
     def remove_from_list
-      return unless in_list?
+      return true unless in_list?
       shift_later_items_towards_start_of_list
       update_attributes(position_field => nil)
     end
@@ -141,6 +231,10 @@ module Mongoid::ActsAsList
       items_in_list.order_by_position.last
     end
 
+    def last_position_in_list
+      last_item_in_list.try(position_field)
+    end
+
     def previous_items_in_list
       items_in_list.where(position_field.lt => self[position_field])
     end
@@ -162,8 +256,9 @@ module Mongoid::ActsAsList
       end
     end
 
-    def start_position_in_list
+    def first_position_in_list
       Mongoid::ActsAsList.configuration.start_list_at
     end
+    alias_method :start_position_in_list, :first_position_in_list
   end
 end
