@@ -237,7 +237,7 @@ shared_examples_for "a list" do
 
   describe " #move" do
     context ":to =>" do
-      context "Integer" do
+      context "an Integer" do
         it "inserts at a given position" do
           item = category_1.items.order_by_position.first
           item.should_receive(:insert_at).with 2
@@ -245,7 +245,7 @@ shared_examples_for "a list" do
         end
       end
 
-      context "Symbol" do
+      context "a Symbol" do
         [:start, :top, :end, :bottom].each do |destination|
           it "moves to #{destination}" do
             item = category_1.items.first
@@ -256,13 +256,23 @@ shared_examples_for "a list" do
       end
     end
 
-    [:before, :above, :after, :below].each do |sym|
+    [:before, :above, :after, :below, :forward, :backward, :lower, :higher].each do |sym|
       context "#{sym} =>" do
         it "delegates to the right method" do
           item = category_1.items.first
           other_item = category_1.items.last
           item.should_receive("move_#{sym}").with(other_item)
           item.move(sym => other_item)
+        end
+      end
+    end
+
+    [:backwards, :higher].each do |sym|
+      context "#{sym}" do
+        it "delegates to the right method" do
+          item = category_1.items.last
+          item.should_receive("move_#{sym}").with()
+          item.move sym
         end
       end
     end
@@ -306,30 +316,114 @@ shared_examples_for "a list" do
     end
   end
 
-  [:backwards, :higher].each do |sym|
+  [:forwards, :lower].each do |sym|
     describe " #move_#{sym}" do
-      xit "is next on my TODO"
+      let(:method) { "move_#{sym}" }
+
       context "for the last item of the list" do
-        it "does not change the item's position"
-        it "returns false"
+        let(:item) { category_1.items.order_by_position.last }
+
+        it "does not change the item's position" do
+          lambda do
+            item.send method
+          end.should_not change(item, position_field)
+        end
+
+        it "keeps items ordered" do
+          item.send method
+          category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+        end
+
+        it "returns false" do
+          item.send(method).should be_false
+        end
       end
+
       context "for any other item" do
-        it "moves to the next position"
-        it "returns true"
+        let(:item) { category_1.items.order_by_position.first }
+
+        it "moves to the next position" do
+          lambda do
+            item.send method
+          end.should change(item, position_field).by(1)
+        end
+
+        it "moves to the nth next position" do
+          lambda do
+            item.send method, 2
+          end.should change(item, position_field).by(2)
+        end
+
+        it "moves to the end of the list if n is too high" do
+          lambda do
+            item.send method, 9
+          end.should change(item, position_field).by(2)
+        end
+
+        it "keeps items ordered" do
+          item.send method, 2
+          category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+        end
+
+        it "returns true" do
+          item.send(method).should be_true
+        end
       end
     end
   end
 
-  [:forwards, :lower].each do |sym|
+  [:backwards, :higher].each do |sym|
     describe " #move_#{sym}" do
-      xit "is next on my TODO"
+      let(:method) { "move_#{sym}" }
+
       context "for the first item of the list" do
-        it "does not change the item's position"
-        it "returns false"
+        let(:item) { category_1.items.order_by_position.first }
+
+        it "does not change the item's position" do
+          lambda do
+            item.send method
+          end.should_not change(item, position_field)
+        end
+
+        it "keeps items ordered" do
+          item.send method
+          category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+        end
+
+        it "returns false" do
+          item.send(method).should be_false
+        end
       end
+
       context "for any other item" do
-        it "moves to the previous position"
-        it "returns true"
+        let(:item) { category_1.items.order_by_position.last }
+
+        it "moves to the previous position" do
+          lambda do
+            item.send method
+          end.should change(item, position_field).by(-1)
+        end
+
+        it "moves to the nth previous position" do
+          lambda do
+            item.send method, 2
+          end.should change(item, position_field).by(-2)
+        end
+
+        it "moves to the end of the list if n is too high" do
+          lambda do
+            item.send method, 9
+          end.should change(item, position_field).by(-2)
+        end
+
+        it "keeps items ordered" do
+          item.send method
+          category_1.items.order_by_position.map(&position_field).should == [0,1,2]
+        end
+
+        it "returns true" do
+          item.send(method).should be_true
+        end
       end
     end
   end

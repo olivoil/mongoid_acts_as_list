@@ -48,10 +48,16 @@ module Mongoid::ActsAsList
     # Public: Moves the item to new position in the list
     #
     # where - a Hash specifying where to move the item
-    #           to:             - an Integer representing a position number
-    #                             or a Symbol from the list :start, :top, :end, :bottom
-    #           before:, above: - another object in the list
-    #           after: , below: - another object in the list
+    #           :to                - an Integer representing a position number
+    #                                or a Symbol from the list :start, :top, :end, :bottom
+    #           :before, :above    - another object in the list
+    #           :after: , :below   - another object in the list
+    #           :forward, :lower   - an Integer specify by how much to move the item forward.
+    #                                will stop moving the item when it reaches the end of the list
+    #           :backward, :higher - an Integer specify by how much to move the item forward.
+    #                                will stop moving the item when it reaches the end of the list
+    #
+    #         or a Symbol in :forward, :lower, :backward, :higher
     #
     # Examples
     #
@@ -69,20 +75,33 @@ module Mongoid::ActsAsList
     #   item.move after: other_item
     #   #=> moves item to position 4
     #
+    #   item.move backward: 3
+    #   #=> move item 3 positions closer to the start of the list
+    #
+    #   item.move :forward
+    #   #=> same as item.move(forward: 1)
+    #
     # Returns nothing
     def move(where = {})
-      options = [:to, :before, :above, :after, :below]
-      prefix, destination = where.each.select { |k, _| options.include? k }.first
+      if where.is_a? Hash
+        options = [:to, :before, :above, :after, :below, :forward, :forwards, :lower, :backward, :backwards, :higher]
 
-      raise ArgumentError, "#move requires one of the following options: #{options.join(', ')}" unless prefix
+        prefix, destination = where.each.select { |k, _| options.include? k }.first
+        raise ArgumentError, "#move requires one of the following options: #{options.join(', ')}" unless prefix
 
-      send("move_#{prefix}", destination)
+        send("move_#{prefix}", destination)
+      else
+        destination = where
+
+        send("move_#{destination}")
+      end
     end
 
     def move_to(destination)
       if destination.is_a? Symbol
         send("move_to_#{destination}")
       else
+        destination = position_within_list_boundaries(destination)
         insert_at destination
       end
     end
@@ -98,15 +117,17 @@ module Mongoid::ActsAsList
     end
     alias_method :move_to_top, :move_to_start
 
-    def move_forwards
-      # TODO
+    def move_forwards by_how_much = 1
+      move_to(self[position_field] + by_how_much) unless last?
     end
-    alias_method :move_lower, :move_forwards
+    alias_method :move_lower  , :move_forwards
+    alias_method :move_forward, :move_forwards
 
-    def move_backwards
-      # TODO
+    def move_backwards by_how_much = 1
+      move_to(self[position_field] - by_how_much) unless first?
     end
-    alias_method :move_higher, :move_backwards
+    alias_method :move_higher , :move_backwards
+    alias_method :move_forward, :move_forwards
 
     def move_before(other_item)
       destination = other_item[position_field]
@@ -260,5 +281,15 @@ module Mongoid::ActsAsList
       Mongoid::ActsAsList.configuration.start_list_at
     end
     alias_method :start_position_in_list, :first_position_in_list
+
+    def position_within_list_boundaries(position)
+      if position < start_position_in_list
+        position = start_position_in_list
+      elsif position > last_position_in_list
+        position = last_position_in_list
+      end
+
+      position
+    end
   end
 end
