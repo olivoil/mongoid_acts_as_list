@@ -13,17 +13,13 @@ describe Mongoid::ActsAsList::List do
     end
 
     describe Mongoid::ActsAsList::List::Embedded do
-      let(:category_1) { Category.create! }
-      let(:category_2) { Category.create! }
-      let(:category_3) { Category.create! }
+      let(:category) { Category.create! }
 
       before do
-        [category_1, category_2].each do |cat|
-          3.times do |n|
-            cat.items.create! position_field => n
-          end
-          cat.should have(3).items
+        3.times do |n|
+          category.items.create! position_field => n
         end
+        category.should have(3).items
       end
 
       it "should be embedded" do
@@ -38,7 +34,7 @@ describe Mongoid::ActsAsList::List do
 
       describe ".acts_as_list" do
         it "defines #scope_condition" do
-          item = category_1.items.first
+          item = category.items.first
           item.scope_condition.should == {position_field.ne => nil}
         end
       end
