@@ -210,7 +210,9 @@ module Mongoid::ActsAsList
     end
     alias_method :lower_item, :previous_item
 
-    # Public: Insert at a given position in the list
+  private
+
+    # Internal: Insert at a given position in the list
     #
     # new_position - an Integer indicating the position to insert the item at
     #
@@ -219,8 +221,6 @@ module Mongoid::ActsAsList
       insert_space_at(new_position)
       update_attribute(position_field, new_position)
     end
-
-  private
 
     # Internal: Make space in the list at a given position number
     #   used when moving a item to a new position in the list.

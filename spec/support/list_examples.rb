@@ -149,21 +149,21 @@ shared_examples_for "a list" do
       let(:item) { category_1.items.order_by_position.last }
 
       it "changes the item's position" do
-        item.insert_at 1
+        item.send :insert_at, 1
         item[position_field].should == 1
       end
 
       it "shuffles intermediary positions" do
         positions = category_1.items.order_by_position.map(&position_field)
         positions.should == [0,1,2]
-        item.insert_at 1
+        item.send :insert_at, 1
         positions = category_1.items.order_by_position.map(&position_field)
         positions.should == [0,1,2]
       end
 
       it "works for items that don't have a position yet" do
         item.remove_from_list
-        item.insert_at 1
+        item.send :insert_at, 1
         item[position_field].should == 1
       end
     end
@@ -172,21 +172,21 @@ shared_examples_for "a list" do
       let(:item) { category_1.items.order_by_position.first }
 
       it "changes the item's position" do
-        item.insert_at 2
+        item.send :insert_at, 2
         item[position_field].should == 2
       end
 
       it "shuffles intermediary positions" do
         positions = category_1.items.order_by_position.map(&position_field)
         positions.should == [0,1,2]
-        item.insert_at 2
+        item.send :insert_at, 2
         positions = category_1.items.order_by_position.map(&position_field)
         positions.should == [0,1,2]
       end
 
       it "works for items that don't have a position yet" do
         item.remove_from_list
-        item.insert_at 2
+        item.send :insert_at, 2
         item[position_field].should == 2
       end
     end
@@ -197,7 +197,7 @@ shared_examples_for "a list" do
         lambda do
           positions = category_1.items.order_by_position.map(&position_field)
           positions.should == [0,1,2]
-          item.insert_at item[position_field]
+          item.send :insert_at, item[position_field]
           positions = category_1.items.order_by_position.map(&position_field)
           positions.should == [0,1,2]
         end.should_not change(item, position_field)
@@ -209,7 +209,7 @@ shared_examples_for "a list" do
         item = category_1.items.order_by_position.last
 
         item.remove_from_list
-        item.insert_at 0
+        item.send :insert_at, 0
 
         item[position_field].should == 0
         category_1.items.order_by_position.map(&position_field).should == [0,1,2]
@@ -218,7 +218,7 @@ shared_examples_for "a list" do
         item = category_1.items.order_by_position.first
 
         item.remove_from_list
-        item.insert_at 1
+        item.send :insert_at, 1
 
         item[position_field].should == 1
         category_1.items.order_by_position.map(&position_field).should == [0,1,2]
@@ -227,7 +227,7 @@ shared_examples_for "a list" do
         item = category_1.items.order_by_position.first
 
         item.remove_from_list
-        item.insert_at 2
+        item.send :insert_at, 2
 
         item[position_field].should == 2
         category_1.items.order_by_position.map(&position_field).should == [0,1,2]
