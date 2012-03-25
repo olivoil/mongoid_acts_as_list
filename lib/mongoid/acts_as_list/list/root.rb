@@ -1,5 +1,9 @@
 module Mongoid::ActsAsList
   module List
+
+    # Internal: Private methods used specifically for root collections (in belongs_to associations)
+    #
+    # Gets included when calling List.acts_as_list in a root document
     module Root
       extend ActiveSupport::Concern
 

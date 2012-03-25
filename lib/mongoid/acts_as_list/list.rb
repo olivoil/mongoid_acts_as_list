@@ -97,6 +97,10 @@ module Mongoid::ActsAsList
       end
     end
 
+    # Public: Moves the item to another position
+    #
+    # destination - a Symbol among :start, :end, :top, :bottom
+    #               or an Integer indicating the new position number to move the item to
     def move_to(destination)
       if destination.is_a? Symbol
         send("move_to_#{destination}")
@@ -106,29 +110,40 @@ module Mongoid::ActsAsList
       end
     end
 
+    # Public: Moves the item to the end of the list
     def move_to_end
       new_position = in_list? ? last_position_in_list : next_available_position_in_list
       insert_at new_position
     end
     alias_method :move_to_bottom, :move_to_end
 
+    # Public: Moves the item to the start of the list
     def move_to_start
       insert_at start_position_in_list
     end
     alias_method :move_to_top, :move_to_start
 
+    # Public: Moves the item closer to the end of the list
+    #
+    # by_how_much - The number of position to move the item by (default: 1)
     def move_forwards by_how_much = 1
       move_to(self[position_field] + by_how_much) unless last?
     end
     alias_method :move_lower  , :move_forwards
     alias_method :move_forward, :move_forwards
 
+    # Public: Moves the item closer to the start of the list
+    #
+    # by_how_much - The number of position to move the item by (default: 1)
     def move_backwards by_how_much = 1
       move_to(self[position_field] - by_how_much) unless first?
     end
     alias_method :move_higher , :move_backwards
     alias_method :move_forward, :move_forwards
 
+    # Public: Moves the item before another one in the list
+    #
+    # other_item - another item of the list
     def move_before(other_item)
       destination = other_item[position_field]
       origin = self[position_field]
@@ -141,6 +156,9 @@ module Mongoid::ActsAsList
     end
     alias_method :move_above, :move_before
 
+    # Public: Moves the item after another one in the list
+    #
+    # other_item - another item of the list
     def move_after(other_item)
       destination = other_item[position_field]
       origin = self[position_field]
@@ -216,7 +234,7 @@ module Mongoid::ActsAsList
     #
     # new_position - an Integer indicating the position to insert the item at
     #
-    # Returns nothing
+    # Returns true if the element's position was updated, false if not
     def insert_at(new_position)
       insert_space_at(new_position)
       update_attribute(position_field, new_position)
@@ -239,6 +257,14 @@ module Mongoid::ActsAsList
       end
     end
 
+    # Internal: get items of the list between two positions
+    #
+    # from    - an Integer representing the first position number in the range
+    # to      - an Integer representing the last position number in the range
+    # options - an Hash of options
+    #           :strict - a Boolean indicating if the range is inclusing (false) or exclusive (true) (default: true)
+    #
+    # Returns a Mongoid::Criteria containing the items between the range
     def items_between(from, to, options = {})
       strict = options.fetch(:strict, true)
       if strict
