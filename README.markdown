@@ -6,6 +6,7 @@ ActsAsList for Mongoid
 Mongoid::ActsAsList provides the ability of ordering and sorting a number of objects in a list using Mongoid as an ODM.
 
 [![Build Status](https://secure.travis-ci.org/olivoil/mongoid_acts_as_list.png)](http://travis-ci.org/olivoil/mongoid_acts_as_list)
+[![Dependency Status](https://gemnasium.com/olivoil/mongoid_acts_as_list.png)](https://gemnasium.com/olivoil/mongoid_acts_as_list)
 
 ## Install
 
