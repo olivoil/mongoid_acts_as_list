@@ -18,7 +18,7 @@ gem 'mongoid_acts_as_list', '~> 0.0.3'
 Then run `bundle install`
 
 
-## Configuration
+## Configure
 
 Configure defaults values used by ActsAsList:
 
@@ -36,7 +36,7 @@ end
 
 Make sure it is loaded before calling ` acts_as_list `. You can place this code in an initializer file for example.
 
-## Usage
+## Use
 
 Activate ActsAsList in your models.
 
@@ -106,7 +106,7 @@ item.previous_item           #=> returns the item immediately preceding `item` i
 ```
 
 Other methods are available, as well as all the methods from the original ActiveRecord ActsAsList gem.
-Check the source and documentation to find out more!
+Check the source and [documentation](http://rubydoc.info/github/olivoil/mongoid_acts_as_list/master/frames) to find out more!
 
 
 ## Requirements
