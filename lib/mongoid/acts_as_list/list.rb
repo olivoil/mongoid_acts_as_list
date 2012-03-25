@@ -47,7 +47,8 @@ module Mongoid::ActsAsList
 
     # Public: Moves the item to new position in the list
     #
-    # where - a Hash specifying where to move the item
+    # where - a Symbol in [:forward, :lower, :backward, :higher]
+    #         or Hash specifying where to move the item:
     #           :to                - an Integer representing a position number
     #                                or a Symbol from the list :start, :top, :end, :bottom
     #           :before, :above    - another object in the list
@@ -57,7 +58,6 @@ module Mongoid::ActsAsList
     #           :backward, :higher - an Integer specify by how much to move the item forward.
     #                                will stop moving the item when it reaches the end of the list
     #
-    #         or a Symbol in :forward, :lower, :backward, :higher
     #
     # Examples
     #
