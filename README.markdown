@@ -13,7 +13,7 @@ Mongoid::ActsAsList provides the ability of ordering and sorting a number of obj
 Place the following in your Gemfile:
 
 ``` ruby
-gem 'mongoid_acts_as_list', '~> 0.0.3'
+gem 'mongoid_acts_as_list', '~> 0.0.4'
 ```
 
 Then run `bundle install`
@@ -116,10 +116,6 @@ item.previous_item           #=> returns the item immediately preceding `item` i
 
 Tested with Mongoid 2.4.6 on Ruby 1.9.3-p125, Rails 3.2.2, and Mongo 2.x
 
-
-## Roadmap
-
-* Test with several layers of embedding documents
 
 
 ## Contributing
