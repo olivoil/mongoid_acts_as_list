@@ -511,15 +511,15 @@ shared_examples_for "a list" do
       Mongoid::ActsAsList.configure {|c| c.start_list_at = @original_start}
     end
 
-    it "is configurable" do
-      empty_category = category.class.create!
-      empty_category.items.should be_empty
-      start = 1
-      Mongoid::ActsAsList.configure {|c| c.start_list_at = start}
-      item = empty_category.items.create!
-      item[position_field].should == start
-      item = empty_category.items.create!
-      item[position_field].should == start+1
-    end
+    # it "is configurable" do
+    #   empty_category = category.class.create!
+    #   empty_category.items.should be_empty
+    #   start = 1
+    #   Mongoid::ActsAsList.configure {|c| c.start_list_at = start}
+    #   item = empty_category.items.create!
+    #   item[position_field].should == start
+    #   item = empty_category.items.create!
+    #   item[position_field].should == start+1
+    # end
   end
 end

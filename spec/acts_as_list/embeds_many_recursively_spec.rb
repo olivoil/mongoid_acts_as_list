@@ -13,24 +13,46 @@ describe Mongoid::ActsAsList::List do
     end
 
     describe Mongoid::ActsAsList::List::Embedded do
-      let(:category) { Category.create! }
+      it_behaves_like 'a list' do
+        let(:category) { Category.create! }
 
-      before do
-        3.times do |n|
-          item = category.items.create! position_field => n
-
-          3.times do |x|
-            item.child_items.create! position_field => x
+        before do
+          3.times do |n|
+            item = category.items.create! position_field => n
+            3.times do |x|
+              item.child_items.create! position_field => x
+            end
+            item.should have(3).child_items
           end
-
-          item.should have(3).child_items
+          category.should have(3).items
         end
-
-        category.should have(3).items
       end
 
-      it_behaves_like 'a list'
+      require 'delegate'
 
+      it_behaves_like 'a list' do
+        let(:category) do
+          cat  = Category.create!
+
+          item = cat.items.create!
+
+          3.times do |n|
+            item.child_items.create! position_field => n
+          end
+
+          class SubItemAsCategory < SimpleDelegator
+            def items
+              __getobj__.child_items
+            end
+            def reload
+              __getobj__.reload
+              self
+            end
+          end
+
+          SubItemAsCategory.new(item)
+        end
+      end
     end
   end
 end
