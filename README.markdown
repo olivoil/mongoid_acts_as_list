@@ -126,10 +126,6 @@ Tested with Mongoid 2.4.6 on Ruby 1.9.3-p125, Rails 3.2.2, and Mongo 2.x
 - Start writing tests
 - Commit and push until all tests are green and you are happy with your contribution
 
-- If you're using Vim, source the .vimrc.local file. It provides 2 shortcuts for running the specs:
-   - `<Leader>r` runs the current spec file
-   - `<Leader>R` runs all spec files
-
 ## Copyright
 
 Copyright (c) 2012 Olivier Melcher, released under the MIT license
