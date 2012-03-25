@@ -76,6 +76,10 @@ class Item
 end
 ```
 
+The public API is composed of the following methods.
+All of the API from the original ActiveRecord ActsAsList gem is also available.
+Check the source and [documentation](http://rubydoc.info/github/olivoil/mongoid_acts_as_list/master/frames) to find out more!
+
 
 ``` ruby
 ## Class Methods
@@ -105,8 +109,6 @@ item.next_item               #=> returns the item immediately following `item` i
 item.previous_item           #=> returns the item immediately preceding `item` in the list
 ```
 
-Other methods are available, as well as all the methods from the original ActiveRecord ActsAsList gem.
-Check the source and [documentation](http://rubydoc.info/github/olivoil/mongoid_acts_as_list/master/frames) to find out more!
 
 
 ## Requirements
