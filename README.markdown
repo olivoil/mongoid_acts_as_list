@@ -108,6 +108,13 @@ item.last?
 
 item.next_item               #=> returns the item immediately following `item` in the list
 item.previous_item           #=> returns the item immediately preceding `item` in the list
+
+## Original ActsAsList #move_ methods
+
+item.move_higher
+item.move_lower
+item.move_to_top
+item.move_to_bottom
 ```
 
 

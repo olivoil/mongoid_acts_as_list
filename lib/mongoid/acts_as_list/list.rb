@@ -8,6 +8,46 @@ module Mongoid::ActsAsList
     class ScopeMissingError < RuntimeError; end
 
     module ClassMethods
+
+      # Public: class macro to enable the ActsAsList module
+      #
+      # options - a Hash of options
+      #             :field - the name of the field to hold the position number as a Symbol or a String (optional)
+      #             :scope - the name of the association to scope the list for (required for non-embedded models)
+      #
+      # Examples
+      #
+      #   ## on a belong_to relation
+      #
+      #   class List
+      #     include Mongoid::Document
+      #
+      #     has_many :items
+      #   end
+      #
+      #   class Item
+      #     include Mongoid::Document
+      #     include Mongoid::ActsAsList
+      #
+      #     belongs_to :list
+      #     acts_as_list scope: :list, field: :position
+      #   end
+      #
+      #   ## on a embedded_in relation
+      #
+      #   class List
+      #     include Mongoid::Document
+      #
+      #     embeds_many :items
+      #   end
+      #
+      #   class Item
+      #     include Mongoid::Document
+      #     include Mongoid::ActsAsList
+      #
+      #     embedded_in :list
+      #     acts_as_list field: :num
+      #   end
       def acts_as_list options = {}
         field = options.fetch(:field, Mongoid::ActsAsList.configuration.default_position_field).try(:to_sym)
         scope = options.fetch(:scope, nil).try(:to_sym)
