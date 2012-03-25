@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = Mongoid::ActsAsList::VERSION
   s.authors     = ["Olivier Melcher"]
   s.email       = ["olivier.melcher@gmail.com"]
-  s.homepage    = ""
+  s.homepage    = "https://github.com/olivoil/mongoid_acts_as_list"
   s.summary     = %q{Implementation of the acts as list gem for Mongoid}
   s.description = %q{}
 
