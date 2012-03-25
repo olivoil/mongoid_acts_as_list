@@ -5,6 +5,7 @@ ActsAsList for Mongoid
 
 Mongoid::ActsAsList provides the ability of ordering and sorting a number of objects in a list using Mongoid as an ODM.
 
+[![Build Status](https://secure.travis-ci.org/olivoil/mongoid_acts_as_list.png)](http://travis-ci.org/olivoil/mongoid_acts_as_list)
 
 ## Install
 
@@ -83,7 +84,7 @@ list.items.order_by_position #=> returns all items in `list` ordered by position
 
 ## Instance Methods
 
-item.move to: 2              #=> moves item to the 2nd position
+item.move to: 2              #=> moves item to position number 2
 item.move to: :start         #=> moves item to the first position in the list
 item.move to: :end           #=> moves item to the last position in the list
 item.move before: other_item #=> moves item before other_item
