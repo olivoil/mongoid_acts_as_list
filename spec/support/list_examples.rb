@@ -103,7 +103,7 @@ shared_examples_for "a list" do
     end
   end
 
-  %w[higher_item next_item].each do |method_name|
+  %w[lower_item next_item].each do |method_name|
     describe "##{method_name}" do
       it "returns the next item in the list if there is one" do
         item      = category.items.where(position_field => 1).first
@@ -124,7 +124,7 @@ shared_examples_for "a list" do
     end
   end
 
-  %w[lower_item previous_item].each do |method_name|
+  %w[higher_item previous_item].each do |method_name|
     describe "##{method_name}" do
       it "returns the previous item in the list if there is one" do
         item          = category.items.where(position_field => 1).first

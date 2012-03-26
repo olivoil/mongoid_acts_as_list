@@ -33,6 +33,7 @@ module Mongoid::ActsAsList
       #     acts_as_list scope: :list, field: :position
       #   end
       #
+      #
       #   ## on a embedded_in relation
       #
       #   class List
@@ -256,7 +257,7 @@ module Mongoid::ActsAsList
       return unless in_list?
       items_in_list.where(position_field => self[position_field]+1).first
     end
-    alias_method :higher_item, :next_item
+    alias_method :lower_item, :next_item
 
     # Public: Gets the preceding item in the list
     #
@@ -266,7 +267,7 @@ module Mongoid::ActsAsList
       return unless in_list?
       items_in_list.where(position_field => self[position_field]-1).first
     end
-    alias_method :lower_item, :previous_item
+    alias_method :higher_item, :previous_item
 
   private
 
