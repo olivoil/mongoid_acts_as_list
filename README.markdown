@@ -130,10 +130,12 @@ Tested with Mongoid 2.4.6 on Ruby 1.9.3-p125, Rails 3.2.2, and Mongo 2.x
 
 ## Contributing
  
+- Open up an issue on Github
 - Fork the project
 - Start a feature/bugfix branch
 - Start writing tests
 - Commit and push until all tests are green and you are happy with your contribution
+- Send a pull request mentionning the issue number (i.e. "Fixes #123")
 
 ## Copyright
 
