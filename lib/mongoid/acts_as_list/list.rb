@@ -180,7 +180,7 @@ module Mongoid::ActsAsList
       move_to(self[position_field] - by_how_much) unless first?
     end
     alias_method :move_higher , :move_backwards
-    alias_method :move_forward, :move_forwards
+    alias_method :move_backward, :move_backwards
 
     # Public: Moves the item before another one in the list
     #
