@@ -103,6 +103,36 @@ shared_examples_for "a list" do
     end
   end
 
+  describe "#increment_position" do
+    let(:item) { category.items.order_by_position.first }
+
+    it "increments the position number" do
+      lambda do
+        item.increment_position
+      end.should change(item, position_field).by(1)
+    end
+
+    it "does not reorder other items" do
+      item.increment_position
+      category.items.order_by_position.map(&position_field).should == [1,1,2]
+    end
+  end
+
+  describe "#increment_position" do
+    let(:item) { category.items.order_by_position.last }
+
+    it "descrements the position number" do
+      lambda do
+        item.decrement_position
+      end.should change(item, position_field).by(-1)
+    end
+
+    it "does not reorder other items" do
+      item.decrement_position
+      category.items.order_by_position.map(&position_field).should == [0,1,1]
+    end
+  end
+
   %w[lower_item next_item].each do |method_name|
     describe "##{method_name}" do
       it "returns the next item in the list if there is one" do

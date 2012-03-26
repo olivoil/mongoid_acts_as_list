@@ -179,7 +179,7 @@ module Mongoid::ActsAsList
     def move_backwards by_how_much = 1
       move_to(self[position_field] - by_how_much) unless first?
     end
-    alias_method :move_higher , :move_backwards
+    alias_method :move_higher  , :move_backwards
     alias_method :move_backward, :move_backwards
 
     # Public: Moves the item before another one in the list
@@ -269,9 +269,7 @@ module Mongoid::ActsAsList
     end
     alias_method :higher_item, :previous_item
 
-  private
-
-    # Internal: Insert at a given position in the list
+    # Public: Insert at a given position in the list
     #
     # new_position - an Integer indicating the position to insert the item at
     #
@@ -280,6 +278,18 @@ module Mongoid::ActsAsList
       insert_space_at(new_position)
       update_attribute(position_field, new_position)
     end
+
+    # Public: increments the position number without affecting other items
+    def increment_position
+      inc(position_field, 1)
+    end
+
+    # Public: decrements the position number without affecting other items
+    def decrement_position
+      inc(position_field, -1)
+    end
+
+  private
 
     # Internal: Make space in the list at a given position number
     #   used when moving a item to a new position in the list.
