@@ -13,7 +13,7 @@ Mongoid::ActsAsList provides the ability of ordering and sorting a number of obj
 Place the following in your Gemfile:
 
 ``` ruby
-gem 'mongoid_acts_as_list', '~> 0.0.4'
+gem 'mongoid_acts_as_list', '~> 0.0.5'
 ```
 
 Then run `bundle install`
