@@ -270,6 +270,7 @@ module Mongoid::ActsAsList
     alias_method :higher_item, :previous_item
 
     # Public: Insert at a given position in the list
+    #         for API compatibility with AR acts_as_list
     #
     # new_position - an Integer indicating the position to insert the item at
     #
@@ -280,13 +281,27 @@ module Mongoid::ActsAsList
     end
 
     # Public: increments the position number without affecting other items
+    #         for API compatibility with AR acts_as_list
     def increment_position
       inc(position_field, 1)
     end
 
     # Public: decrements the position number without affecting other items
+    #         for API compatibility with AR acts_as_list
     def decrement_position
       inc(position_field, -1)
+    end
+
+    # Public: returns the default position symbol as defined in the configuration
+    #         for API compatibility with AR acts_as_list
+    def default_position
+      Mongoid::ActsAsList.configuration.default_position_field
+    end
+
+    # Public: returns true if the model uses the default position field name as defined in the configuration
+    #         for API compatibility with AR acts_as_list
+    def default_position?
+      position_field == default_position
     end
 
   private

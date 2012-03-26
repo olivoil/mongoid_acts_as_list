@@ -551,4 +551,23 @@ shared_examples_for "a list" do
       item[position_field].should == start+1
     end
   end
+
+  describe "#default_position" do
+    it "returns the default position field name" do
+      item = category.items.create!
+      item.default_position.should == position_field
+    end
+  end
+  describe "#default_position?" do
+    let(:item) { category.items.create! }
+
+    it "returns true if the model uses the default position field" do
+      item.default_position?.should == true
+    end
+
+    it "returns false if not" do
+      item.stub(:position_field).and_return :blahblah
+      item.default_position?.should == false
+    end
+  end
 end
