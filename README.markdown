@@ -111,10 +111,13 @@ item.previous_item           #=> returns the item immediately preceding `item` i
 
 ## Original ActsAsList #move_ methods
 
-item.move_higher
-item.move_lower
-item.move_to_top
-item.move_to_bottom
+item.move_higher             #=> same as item.move(:backward)
+item.move_lower              #=> same as item.move(:forward)
+item.move_to_top             #=> same as item.move(to: :start)
+item.move_to_bottom          #=> same as item.move(to: :end)
+item.increment_position      #=> increments the position number without affecting other items
+item.decrement_position      #=> decrements the position number without affecting other items
+item.insert_at 3             #=> same as item.move(to: 3)
 ```
 
 
