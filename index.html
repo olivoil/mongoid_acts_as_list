@@ -1,0 +1,180 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Mongoid ActsAsList by olivoil</title>
+    
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Mongoid ActsAsList</h1>
+        <p>Mongoid. Acts. As. List.</p>
+        <p class="view"><a href="https://github.com/olivoil/mongoid_acts_as_list">View the Project on GitHub <small>olivoil/mongoid_acts_as_list</small></a></p>
+        <ul>
+          <li><a href="https://github.com/olivoil/mongoid_acts_as_list/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/olivoil/mongoid_acts_as_list/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/olivoil/mongoid_acts_as_list">Fork On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>ActsAsList for Mongoid</h1>
+
+<h2>Description</h2>
+
+<p>Mongoid::ActsAsList provides the ability of ordering and sorting a number of objects in a list using Mongoid as an ODM.</p>
+
+<p><a href="http://travis-ci.org/olivoil/mongoid_acts_as_list"><img src="https://secure.travis-ci.org/olivoil/mongoid_acts_as_list.png" alt="Build Status"></a>
+<a href="https://gemnasium.com/olivoil/mongoid_acts_as_list"><img src="https://gemnasium.com/olivoil/mongoid_acts_as_list.png" alt="Dependency Status"></a></p>
+
+<h2>Install</h2>
+
+<p>Place the following in your Gemfile:</p>
+
+<div class="highlight">
+<pre><span class="n">gem</span> <span class="s1">'mongoid_acts_as_list'</span><span class="p">,</span> <span class="s1">'~&gt; 0.0.5'</span>
+</pre>
+</div>
+
+
+<p>Then run <code>bundle install</code></p>
+
+<h2>Configure</h2>
+
+<p>Configure defaults values used by ActsAsList:</p>
+
+<div class="highlight">
+<pre><span class="no">Mongoid</span><span class="o">::</span><span class="no">ActsAsList</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+
+  <span class="c1"># These are the default values. Modify as you see fit:</span>
+
+  <span class="n">config</span><span class="o">.</span><span class="n">default_position_field</span> <span class="o">=</span> <span class="ss">:position</span>
+  <span class="n">config</span><span class="o">.</span><span class="n">start_list_at</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>Make sure it is loaded before calling <code>acts_as_list</code>. You can place this code in an initializer file for example.</p>
+
+<h2>Use</h2>
+
+<p>Activate ActsAsList in your models.</p>
+
+<p>In has_many/belongs_to associations, you will need to provide a <code>:scope</code> option:</p>
+
+<div class="highlight">
+<pre><span class="k">class</span> <span class="nc">List</span>
+  <span class="kp">include</span> <span class="no">Mongoid</span><span class="o">::</span><span class="no">Document</span>
+
+  <span class="n">has_many</span> <span class="ss">:items</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Item</span>
+  <span class="kp">include</span> <span class="no">Mongoid</span><span class="o">::</span><span class="no">Document</span>
+  <span class="kp">include</span> <span class="no">Mongoid</span><span class="o">::</span><span class="no">ActsAsList</span>
+
+  <span class="n">belongs_to</span> <span class="ss">:list</span>
+  <span class="n">acts_as_list</span> <span class="n">scope</span><span class="p">:</span> <span class="ss">:list</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>On embedded document, the scope option is not necessary:</p>
+
+<div class="highlight">
+<pre><span class="k">class</span> <span class="nc">List</span>
+  <span class="kp">include</span> <span class="no">Mongoid</span><span class="o">::</span><span class="no">Document</span>
+
+  <span class="n">embeds_many</span> <span class="ss">:items</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Item</span>
+  <span class="kp">include</span> <span class="no">Mongoid</span><span class="o">::</span><span class="no">Document</span>
+  <span class="kp">include</span> <span class="no">Mongoid</span><span class="o">::</span><span class="no">ActsAsList</span>
+
+  <span class="n">embedded_in</span> <span class="ss">:list</span>
+  <span class="n">acts_as_list</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>The public API is composed of the following methods.
+All of the API from the original ActiveRecord ActsAsList gem is also available.
+Check the source and <a href="http://rubydoc.info/github/olivoil/mongoid_acts_as_list/master/frames">documentation</a> to find out more!</p>
+
+<div class="highlight">
+<pre><span class="c1">## Class Methods</span>
+
+<span class="n">list</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">order_by_position</span> <span class="c1">#=&gt; returns all items in `list` ordered by position</span>
+
+<span class="c1">## Instance Methods</span>
+
+<span class="n">item</span><span class="o">.</span><span class="n">move</span> <span class="n">to</span><span class="p">:</span> <span class="mi">2</span>              <span class="c1">#=&gt; moves item to position number 2</span>
+<span class="n">item</span><span class="o">.</span><span class="n">move</span> <span class="n">to</span><span class="p">:</span> <span class="ss">:start</span>         <span class="c1">#=&gt; moves item to the first position in the list</span>
+<span class="n">item</span><span class="o">.</span><span class="n">move</span> <span class="n">to</span><span class="p">:</span> <span class="ss">:end</span>           <span class="c1">#=&gt; moves item to the last position in the list</span>
+<span class="n">item</span><span class="o">.</span><span class="n">move</span> <span class="n">before</span><span class="p">:</span> <span class="n">other_item</span> <span class="c1">#=&gt; moves item before other_item</span>
+<span class="n">item</span><span class="o">.</span><span class="n">move</span> <span class="n">after</span><span class="p">:</span>  <span class="n">other_item</span> <span class="c1">#=&gt; moves item after other_item</span>
+<span class="n">item</span><span class="o">.</span><span class="n">move</span> <span class="n">forward</span><span class="p">:</span>  <span class="mi">3</span>        <span class="c1">#=&gt; move item 3 positions closer to the end of the list</span>
+<span class="n">item</span><span class="o">.</span><span class="n">move</span> <span class="n">backward</span><span class="p">:</span> <span class="mi">2</span>        <span class="c1">#=&gt; move item 2 positions closer to the start of the list</span>
+<span class="n">item</span><span class="o">.</span><span class="n">move</span> <span class="ss">:forward</span>           <span class="c1">#=&gt; same as item.move(forward:  1)</span>
+<span class="n">item</span><span class="o">.</span><span class="n">move</span> <span class="ss">:backward</span>          <span class="c1">#=&gt; same as item.move(backward: 1)</span>
+
+<span class="n">item</span><span class="o">.</span><span class="n">in_list?</span>                <span class="c1">#=&gt; true</span>
+<span class="n">item</span><span class="o">.</span><span class="n">remove_from_list</span>        <span class="c1">#=&gt; sets the position to nil and reorders other items</span>
+<span class="n">item</span><span class="o">.</span><span class="n">not_in_list?</span>            <span class="c1">#=&gt; true</span>
+
+<span class="n">item</span><span class="o">.</span><span class="n">first?</span>
+<span class="n">item</span><span class="o">.</span><span class="n">last?</span>
+
+<span class="n">item</span><span class="o">.</span><span class="n">next_item</span>               <span class="c1">#=&gt; returns the item immediately following `item` in the list</span>
+<span class="n">item</span><span class="o">.</span><span class="n">previous_item</span>           <span class="c1">#=&gt; returns the item immediately preceding `item` in the list</span>
+
+<span class="c1">## Original ActsAsList #move_ methods</span>
+
+<span class="n">item</span><span class="o">.</span><span class="n">move_higher</span>             <span class="c1">#=&gt; same as item.move(:backward)</span>
+<span class="n">item</span><span class="o">.</span><span class="n">move_lower</span>              <span class="c1">#=&gt; same as item.move(:forward)</span>
+<span class="n">item</span><span class="o">.</span><span class="n">move_to_top</span>             <span class="c1">#=&gt; same as item.move(to: :start)</span>
+<span class="n">item</span><span class="o">.</span><span class="n">move_to_bottom</span>          <span class="c1">#=&gt; same as item.move(to: :end)</span>
+<span class="n">item</span><span class="o">.</span><span class="n">increment_position</span>      <span class="c1">#=&gt; increments the position number without affecting other items</span>
+<span class="n">item</span><span class="o">.</span><span class="n">decrement_position</span>      <span class="c1">#=&gt; decrements the position number without affecting other items</span>
+<span class="n">item</span><span class="o">.</span><span class="n">insert_at</span> <span class="mi">3</span>             <span class="c1">#=&gt; same as item.move(to: 3)</span>
+</pre>
+</div>
+
+
+<h2>Requirements</h2>
+
+<p>Tested with Mongoid 2.4.6 on Ruby 1.9.3-p125, Rails 3.2.2, and Mongo 2.x</p>
+
+<h2>Contributing</h2>
+
+<ul>
+<li>Open up an issue on Github</li>
+<li>Fork the project</li>
+<li>Start a feature/bugfix branch</li>
+<li>Start writing tests</li>
+<li>Commit and push until all tests are green and you are happy with your contribution</li>
+<li>Send a pull request mentionning the issue number (i.e. "Fixes #123")</li>
+</ul><h2>Copyright</h2>
+
+<p>Copyright (c) 2012 Olivier Melcher, released under the MIT license</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/olivoil">olivoil</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+  </body>
+</html>
